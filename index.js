@@ -19,4 +19,25 @@ class space {
     }
 }
 
-export {ship, space}
+class board {
+    constructor (name) {
+        this.name = name
+        this.misses = []
+        this.ships = []
+        this.spaces = []
+        const makeSpaces = (() => {
+            for(let x = 1; x <= 10; x++) {
+                for (let y = 1; y <= 10; y++) {
+                    const newSpace = new space(x,y)
+                    this.spaces.push(newSpace)
+                }
+            }
+        })()
+    }
+
+    space = (x,y) => {
+        return this.spaces.filter(space => space.x === x && space.y === y)[0]
+    }
+}
+
+export {ship, space, board}

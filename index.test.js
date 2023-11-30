@@ -1,4 +1,4 @@
-import {ship, space} from './index.js'
+import {ship, space, board} from './index.js'
 
 test('ship returns an object with length equal to passed parameter', () => {
     const carrier = new ship('carrier', 5)
@@ -35,4 +35,14 @@ test('a space ship pointer updates correctly', () => {
     testSpace.ship = testShip
     testShip.hit()
     expect(testSpace.ship.sunk()).toBe(true)
+})
+
+test('board constructor makes 100 spaces', () => {
+    const playerBoard = new board('player')
+    expect(playerBoard.spaces.length).toBe(100)
+})
+
+test('board space method returns space objects with correct key value pairs', () => {
+    const playerBoard = new board('player')
+    expect(playerBoard.space(2,3)).toMatchObject({x:2, y:3})
 })
