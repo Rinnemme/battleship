@@ -1,5 +1,6 @@
 class ship {
-    constructor (length) {
+    constructor (name, length) {
+        this.name = name
         this.length = length
     }
     hit = () => this.length--
@@ -9,4 +10,13 @@ class ship {
     }
 }
 
-export {ship}
+class space {
+    constructor (x,y) {
+        this.x = x
+        this.y = y
+        this.ship = null
+        this.mark = null
+    }
+}
+
+export {ship, space}
