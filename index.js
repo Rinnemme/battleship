@@ -58,4 +58,24 @@ class player {
     } 
 }
 
-export {ship, space, board, player}
+const domBoards = (() => {
+    const playerBoard = document.getElementById('player-board')
+    const botBoard = document.getElementById('bot-board')
+
+    for(let y = 1; y <= 10; y++) {
+        for(let x = 1; x <= 10; x++) {
+            const playerSpace = document.createElement('div')
+            playerSpace.classList.add('space')
+            playerSpace.setAttribute('x', x)
+            playerSpace.setAttribute('y', y)
+            playerBoard.appendChild(playerSpace)
+            const botSpace = document.createElement('div')
+            botSpace.classList.add('space')
+            botSpace.setAttribute('x', x)
+            botSpace.setAttribute('y', y)
+            botBoard.appendChild(botSpace)
+        }
+    }
+})()
+
+// export {ship, space, board, player}
