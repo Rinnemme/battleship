@@ -2,6 +2,8 @@ class ship {
     constructor (name, length) {
         this.name = name
         this.length = length
+        this.start = null
+        this.end = null
     }
     hit = () => this.length--
     sunk = () => {
@@ -22,8 +24,7 @@ class space {
 class board {
     constructor (name) {
         this.name = name
-        this.misses = []
-        this.ships = []
+        this.hits = []
         this.spaces = []
         const makeSpaces = (() => {
             for(let x = 1; x <= 10; x++) {
@@ -40,4 +41,21 @@ class board {
     }
 }
 
-export {ship, space, board}
+class player {
+    constructor (name) {
+        this.name = name
+    }
+
+    attack = (board, x, y) => {
+        const target = board.space(x,y)
+        if (target.ship === null) {
+            target.mark = 'miss'
+        } else {
+            target.ship.hit()
+            target.mark = 'hit'
+            board.hits.push(target)
+        }
+    } 
+}
+
+export {ship, space, board, player}
