@@ -69,6 +69,13 @@ const playerDomBoard = (() => {
             playerBoard.appendChild(playerSpace)
         }
     }
+
+    const space = (x,y) => {
+        return Array.from(playerBoard.children).filter(space => 
+            space.getAttribute('x') === `${x}` && space.getAttribute('y') === `${y}`)[0]
+    }
+
+    return {space}
 })()
 
 const botDomBoard = (() => {
@@ -82,7 +89,13 @@ const botDomBoard = (() => {
             botBoard.appendChild(botSpace)
         }
     }
-})()
 
+    const space = (x,y) => {
+        return Array.from(playerBoard.children).filter(space => 
+            space.getAttribute('x') === `${x}` && space.getAttribute('y') === `${y}`)[0]
+    }
+
+    return {space}
+})()
 
 // export {ship, space, board, player}
