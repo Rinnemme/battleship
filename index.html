@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Battleship</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500&family=Playfair+Display&family=Raleway:wght@200;300;400&display=swap" rel="stylesheet">
+
+</head>
+<body>
+    <div id="content-container">
+        <h1>Battleship</h1>
+        <div id="game-message">Sample message here</div>
+        <div id="board-container">
+            <div id="player-block">
+                <h4>Player's Board</h4>
+                <div id="player-board" class="board">
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                </div>
+            </div>
+            <div id="bot-block">
+                <h4>Bot's Board</h4>
+                <div id="bot-board" class="board">
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                    <div class="space">1</div>
+                </div>
+            </div>
+            <script src="dom.js"></script>
+        </div>
+    </div>
+</body>
+</html>
