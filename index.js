@@ -41,7 +41,7 @@ class board {
     }
 }
 
-class player {
+class combatant {
     constructor (name) {
         this.name = name
     }
@@ -56,7 +56,7 @@ class player {
             board.hits.push(target)
         }
     } 
-}
+}   
 
 const playerDomBoard = (() => {
     const playerBoard = document.getElementById('player-board')
@@ -98,4 +98,4 @@ const botDomBoard = (() => {
     return {space}
 })()
 
-// export {ship, space, board, player}
+export {ship, space, board, combatant}

@@ -1,4 +1,4 @@
-import {ship, space, board, player} from './index.js'
+import {ship, space, board, combatant} from './index.js'
 
 test('ship returns an object with length equal to passed parameter', () => {
     const carrier = new ship('carrier', 5)
@@ -49,7 +49,7 @@ test('board space method returns space objects with correct key value pairs', ()
 
 test('player attack function adjusts the stricken space mark', () => {
     const testBoard = new board('test')
-    const ralph = new player('ralph')
+    const ralph = new combatant('ralph')
     expect(testBoard.space(2,3).mark).toBe(null)
     ralph.attack(testBoard, 2, 3)
     expect(testBoard.space(2,3).mark).not.toBe(null)
@@ -58,7 +58,7 @@ test('player attack function adjusts the stricken space mark', () => {
 test('attacking a space that is a ship hits the ship and adds to the board hit array', () => {
     const testBoard = new board('test')
     testBoard.space(4,5).ship = new ship('battleship',5)
-    const ralph = new player('ralph')
+    const ralph = new combatant('ralph')
     expect(testBoard.hits.length).toBe(0)
     ralph.attack(testBoard, 4, 5)
     expect(testBoard.space(4,5).mark).toBe('hit')
