@@ -44,6 +44,11 @@ class combatant {
     constructor (name) {
         this.name = name
         this.board = new board()
+        this.carrier = new ship('carrier', 5)
+        this.battleship = new ship('battleship', 4)
+        this.destroyer = new ship('destroyer', 3)
+        this.submarine = new ship('submarine',3)
+        this.patrolBoat = new ship('patrol boat', 2)
     }
 
     attack = (board, x, y) => {
@@ -56,7 +61,7 @@ class combatant {
             board.hits.push(target)
         }
     } 
-}   
+}
 
 // const playerDomBoard = (() => {
 //     const playerBoard = document.getElementById('player-board')

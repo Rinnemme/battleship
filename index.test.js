@@ -72,3 +72,10 @@ test('making a player assigns them a board properly', () => {
     expect(player.board.spaces[0]).toMatchObject({x:1, y:1})
     expect(player.board.spaces[99]).toMatchObject({x:10, y:10})
 })
+
+test ('mapping a player board space to a player ship reacts correctly', () => {
+    const player = new combatant('player')
+    expect(player.battleship.length).toBe(4)
+    player.battleship.hit()
+    expect(player.battleship.length).toBe(3)
+})
