@@ -22,8 +22,7 @@ class space {
 }
 
 class board {
-    constructor (name) {
-        this.name = name
+    constructor () {
         this.hits = []
         this.spaces = []
         const makeSpaces = (() => {
@@ -58,44 +57,46 @@ class combatant {
     } 
 }   
 
-const playerDomBoard = (() => {
-    const playerBoard = document.getElementById('player-board')
-    for(let y = 1; y <= 10; y++) {
-        for(let x = 1; x <= 10; x++) {
-            const playerSpace = document.createElement('div')
-            playerSpace.classList.add('space')
-            playerSpace.setAttribute('x', x)
-            playerSpace.setAttribute('y', y)
-            playerBoard.appendChild(playerSpace)
-        }
-    }
+// const playerDomBoard = (() => {
+//     const playerBoard = document.getElementById('player-board')
+//     for(let y = 1; y <= 10; y++) {
+//         for(let x = 1; x <= 10; x++) {
+//             const playerSpace = document.createElement('div')
+//             playerSpace.classList.add('space')
+//             playerSpace.setAttribute('x', x)
+//             playerSpace.setAttribute('y', y)
+//             playerBoard.appendChild(playerSpace)
+//         }
+//     }
 
-    const space = (x,y) => {
-        return Array.from(playerBoard.children).filter(space => 
-            space.getAttribute('x') === `${x}` && space.getAttribute('y') === `${y}`)[0]
-    }
+//     const space = (x,y) => {
+//         return Array.from(playerBoard.children).filter(space => 
+//             space.getAttribute('x') === `${x}` && space.getAttribute('y') === `${y}`)[0]
+//     }
 
-    return {space}
-})()
+//     return {space}
+// })()
 
-const botDomBoard = (() => {
-    const botBoard = document.getElementById('bot-board')
-    for(let y = 1; y <= 10; y++) {
-        for(let x = 1; x <= 10; x++) {
-            const botSpace = document.createElement('div')
-            botSpace.classList.add('space')
-            botSpace.setAttribute('x', x)
-            botSpace.setAttribute('y', y)
-            botBoard.appendChild(botSpace)
-        }
-    }
+// const botDomBoard = (() => {
+//     const botBoard = document.getElementById('bot-board')
+//     for(let y = 1; y <= 10; y++) {
+//         for(let x = 1; x <= 10; x++) {
+//             const botSpace = document.createElement('div')
+//             botSpace.classList.add('space')
+//             botSpace.setAttribute('x', x)
+//             botSpace.setAttribute('y', y)
+//             botBoard.appendChild(botSpace)
+//         }
+//     }
 
-    const space = (x,y) => {
-        return Array.from(playerBoard.children).filter(space => 
-            space.getAttribute('x') === `${x}` && space.getAttribute('y') === `${y}`)[0]
-    }
+//     const space = (x,y) => {
+//         return Array.from(playerBoard.children).filter(space => 
+//             space.getAttribute('x') === `${x}` && space.getAttribute('y') === `${y}`)[0]
+//     }
 
-    return {space}
-})()
+//     return {space}
+// })()
+
+
 
 export {ship, space, board, combatant}

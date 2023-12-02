@@ -38,7 +38,7 @@ test('a space ship pointer updates correctly', () => {
 })
 
 test('board constructor makes 100 spaces', () => {
-    const playerBoard = new board('player')
+    const playerBoard = new board()
     expect(playerBoard.spaces.length).toBe(100)
 })
 
@@ -48,7 +48,7 @@ test('board space method returns space objects with correct key value pairs', ()
 })
 
 test('player attack function adjusts the stricken space mark', () => {
-    const testBoard = new board('test')
+    const testBoard = new board()
     const ralph = new combatant('ralph')
     expect(testBoard.space(2,3).mark).toBe(null)
     ralph.attack(testBoard, 2, 3)
@@ -56,7 +56,7 @@ test('player attack function adjusts the stricken space mark', () => {
 })
 
 test('attacking a space that is a ship hits the ship and adds to the board hit array', () => {
-    const testBoard = new board('test')
+    const testBoard = new board()
     testBoard.space(4,5).ship = new ship('battleship',5)
     const ralph = new combatant('ralph')
     expect(testBoard.hits.length).toBe(0)
