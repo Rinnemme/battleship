@@ -26,8 +26,8 @@ class board {
         this.hits = []
         this.spaces = []
         const makeSpaces = (() => {
-            for(let x = 1; x <= 10; x++) {
-                for (let y = 1; y <= 10; y++) {
+            for(let y = 1; y <= 10; y++) {
+                for (let x = 1; x <= 10; x++) {
                     const newSpace = new space(x,y)
                     this.spaces.push(newSpace)
                 }
@@ -43,6 +43,7 @@ class board {
 class combatant {
     constructor (name) {
         this.name = name
+        this.board = new board()
     }
 
     attack = (board, x, y) => {
