@@ -64,7 +64,7 @@ class combatant {
 }
 
 const player = new combatant('player')
-const bot = new combatant('bot')
+const bot = new combatant('the bot')
 
 const playerDomBoard = (() => {
     const playerBoard = document.getElementById('player-board')
@@ -230,6 +230,9 @@ const placePlayerShips = (() => {
             message.textContent = `Select a space to set the starting point of your ${playerShips[index].name}`
         } else if (index === 4) {
             message.textContent = 'all ships are placed!'
+            const domBoard = document.getElementById('bot-board')
+            const botBoardArray = Array.from(domBoard.children)
+            botBoardArray.forEach(element => element.onclick = () => strike(player, element))
         }
     }
 })()
@@ -359,5 +362,38 @@ const placeBotShips = (() => {
         clickableArray[Math.floor(Math.random()*clickableArray.length)].click()
     }
 })()
+
+const game = (() => {
+    const over = () => {
+        if (bot.board.hits.length === 17) return true
+        else if (player.board.hits.length === 17) return true
+        else return false
+    }
+
+    return {over}
+})()
+
+function strike(combatant, element) {
+    message = document.getElementById('game-message')
+    const opponent = combatant === player ? bot : player
+    const domBoard = combatant === player ? document.getElementById('bot-board') : document.getElementById('player-board')
+    const combatantName = combatant === player ? 'You' : 'The bot'
+    const opponentPossessive = combatant === player ? `the bot's` : 'your'
+    Array.from(domBoard.children).forEach(element => element.style.fontWeight = '200')
+    combatant.attack(opponent.board, +element.getAttribute('x'), +element.getAttribute('y'))
+    if (element.space.mark === 'hit') {
+        element.style.fontWeight = '800'
+        element.textContent = 'X'
+        if (element.space.ship.sunk() === true) {
+            if (game.over()) message.textContent = `${combatantName} sunk ${opponentPossessive} ${element.space.ship.name}, and won the game!`
+            else message.textContent = `${combatantName} sunk ${opponentPossessive} ${element.space.ship.name}`
+        }
+        else message.textContent = `${combatantName} got a hit!`
+    }
+    else if (element.space.mark === 'miss') {
+        element.textContent = "O"   
+        message.textContent = `${combatantName} missed!`
+    }
+}
 
 // export {ship, space, board, combatant}
