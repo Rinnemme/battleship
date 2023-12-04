@@ -101,7 +101,7 @@ const botDomBoard = (() => {
     }
 
     const element = (x,y) => {
-        return Array.from(playerBoard.children).filter(element => 
+        return Array.from(botBoard.children).filter(element => 
             element.getAttribute('x') === `${x}` && element.getAttribute('y') === `${y}`)[0]
     }
 
@@ -114,6 +114,7 @@ const placePlayerShips = (() => {
     const message = document.getElementById('game-message')
     const playerBoardArray = Array.from(domBoard.children)
     playerShips = [player.carrier, player.battleship, player.destroyer, player.submarine, player.patrolBoat]
+    shipColor = ['#F52F57', '#F3752B', '#FFC863', '#59CD90', '#3FA7D6']
     let index = 0
     let shipStart = null
     let potentialEnds = []
@@ -180,7 +181,7 @@ const placePlayerShips = (() => {
         if(hasPotentialEnds()) {
             highlightPotentialEnds(element)
             shipStart = element
-            playerBoardArray.forEach(element => element.onclick = () => '')
+            playerBoardArray.forEach(element => element.onclick = null)
             potentialEnds.forEach(element => element.onclick = () => {setShipEnd(element)})
             message.textContent = `Select a space to set the end point of your ${playerShips[index].name}`
         }
@@ -196,25 +197,25 @@ const placePlayerShips = (() => {
             const x = startX
             for (let y = startY; y >= endY; y--) {
                 playerDomBoard.element(x,y).space.ship = playerShips[index]
-                playerDomBoard.element(x,y).style.backgroundColor = "black"
+                playerDomBoard.element(x,y).style.backgroundColor = shipColor[index]
             }
         } else if (startY<endY) {
             const x = startX
             for (let y = startY; y <= endY; y++) {
                 playerDomBoard.element(x,y).space.ship = playerShips[index]
-                playerDomBoard.element(x,y).style.backgroundColor = "black"
+                playerDomBoard.element(x,y).style.backgroundColor = shipColor[index]
             }
         } else if (startX>endX) {
             const y = startY
             for (let x = startX; x >= endX; x--) {
                 playerDomBoard.element(x,y).space.ship = playerShips[index]
-                playerDomBoard.element(x,y).style.backgroundColor = "black"
+                playerDomBoard.element(x,y).style.backgroundColor = shipColor[index]
             }
         } else if (startX<endX) {
             const y = startY
             for (let x = startX; x <= endX; x++) {
                 playerDomBoard.element(x,y).space.ship = playerShips[index]
-                playerDomBoard.element(x,y).style.backgroundColor = "black"
+                playerDomBoard.element(x,y).style.backgroundColor = shipColor[index]
             }
         }
     }
@@ -230,6 +231,132 @@ const placePlayerShips = (() => {
         } else if (index === 4) {
             message.textContent = 'all ships are placed!'
         }
+    }
+})()
+
+const placeBotShips = (() => {
+    const domBoard = document.getElementById('bot-board')
+    const botBoardArray = Array.from(domBoard.children)
+    botShips = [bot.carrier, bot.battleship, bot.destroyer, bot.submarine, bot.patrolBoat]
+    shipColor = ['#F52F57', '#F3752B', '#FFC863', '#59CD90', '#3FA7D6']
+    let index = 0
+    let shipStart = null
+    let potentialEnds = []
+    let botShipsPlaced = false
+    botBoardArray.forEach(element => element.onclick = () => {setShipStart(element)})
+
+    const hasPotentialEnds = () => {
+        if (potentialEnds.length > 0) return true
+        return false
+    }
+
+    const isObstructed = (start, end) => {
+        const startX = +start.getAttribute('x')
+        const startY = +start.getAttribute('y')
+        const endX = +end.getAttribute('x')
+        const endY = +end.getAttribute('y')
+        if (startY>endY) {
+            const x = startX
+            for (let y = startY; y >= endY; y--) {
+                if (botDomBoard.element(x,y).space.ship !== null) return true
+            }
+        } else if (startY<endY) {
+            const x = startX
+            for (let y = startY; y <= endY; y++) {
+                if (botDomBoard.element(x,y).space.ship !== null) return true
+            }
+        } else if (startX>endX) {
+            const y = startY
+            for (let x = startX; x >= endX; x--) {
+                if (botDomBoard.element(x,y).space.ship !== null) return true
+            }
+        } else if (startX<endX) {
+            const y = startY
+            for (let x = startX; x <= endX; x++) {
+                if (botDomBoard.element(x,y).space.ship !== null) return true
+            }
+        }
+        return false
+    }
+
+    const highlightPotentialEnds = (element) => {
+        element.style.backgroundColor = "gray"
+        potentialEnds.forEach(element => element.style.backgroundColor = "lightgray")
+    }
+
+    const setShipStart = (element) => {
+        const x = +(element.getAttribute('x'))
+        const y = +(element.getAttribute('y'))
+        const distance = (playerShips[index].length-1)
+        const left = botDomBoard.element((x-distance),y)
+        const down = botDomBoard.element(x,(y+distance))
+        const right = botDomBoard.element((x+distance),y)
+        const up = botDomBoard.element(x,(y-distance))
+        const endOptionArray = [left, down, right, up]
+        endOptionArray.forEach(option => {
+            if (option !== undefined && option.space.ship === null && isObstructed(element,option) === false) {
+                potentialEnds.push(option)
+            }
+        })
+        if(!hasPotentialEnds()) {
+            return
+        }
+        if(hasPotentialEnds()) {
+            highlightPotentialEnds(element)
+            shipStart = element
+            botBoardArray.forEach(element => element.onclick = null)
+            potentialEnds.forEach(element => element.onclick = () => {setShipEnd(element)})
+        }
+    }
+    
+    const markAsShip = (start, end) => {
+        startY = +start.getAttribute('y')
+        startX = +start.getAttribute('x')
+        endY = +end.getAttribute('y')
+        endX = +end.getAttribute('x')
+        potentialEnds.forEach(element => element.style.backgroundColor = "white")
+        if (startY>endY) {
+            const x = startX
+            for (let y = startY; y >= endY; y--) {
+                botDomBoard.element(x,y).space.ship = playerShips[index]
+                botDomBoard.element(x,y).style.backgroundColor = shipColor[index]
+            }
+        } else if (startY<endY) {
+            const x = startX
+            for (let y = startY; y <= endY; y++) {
+                botDomBoard.element(x,y).space.ship = playerShips[index]
+                botDomBoard.element(x,y).style.backgroundColor = shipColor[index]
+            }
+        } else if (startX>endX) {
+            const y = startY
+            for (let x = startX; x >= endX; x--) {
+                botDomBoard.element(x,y).space.ship = playerShips[index]
+                botDomBoard.element(x,y).style.backgroundColor = shipColor[index]
+            }
+        } else if (startX<endX) {
+            const y = startY
+            for (let x = startX; x <= endX; x++) {
+                botDomBoard.element(x,y).space.ship = playerShips[index]
+                botDomBoard.element(x,y).style.backgroundColor = shipColor[index]
+            }
+        }
+    }
+
+    const setShipEnd = (element) => {
+        markAsShip(shipStart, element)
+        if (index < 4) {
+            index++
+            shipStart = null
+            potentialEnds = []
+            botBoardArray.forEach(element => element.onclick = () => {setShipStart(element)})
+        } else if (index === 4) {
+            botShipsPlaced = true
+        }
+    }
+
+    while (botShipsPlaced === false) {
+        let clickableArray = botBoardArray.filter(element => element.onclick !== null)
+        clickableArray[Math.floor(Math.random()*clickableArray.length)].click()
     }
 })()
 
