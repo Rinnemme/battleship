@@ -357,7 +357,7 @@ const placeBotShips = (() => {
         startX = +start.getAttribute('x')
         endY = +end.getAttribute('y')
         endX = +end.getAttribute('x')
-        potentialEnds.forEach(element => element.style.backgroundColor = "white")
+        // potentialEnds.forEach(element => element.style.backgroundColor = "white")
         if (startY>endY) {
             const x = startX
             for (let y = startY; y >= endY; y--) {
