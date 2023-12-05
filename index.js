@@ -230,9 +230,7 @@ const placePlayerShips = (() => {
             message.textContent = `Select a space to set the starting point of your ${playerShips[index].name}`
         } else if (index === 4) {
             message.textContent = 'all ships are placed!'
-            const domBoard = document.getElementById('bot-board')
-            const botBoardArray = Array.from(domBoard.children)
-            botBoardArray.forEach(element => element.onclick = () => strike(player, element))
+            game.changeTurn()
         }
     }
 })()
@@ -364,16 +362,42 @@ const placeBotShips = (() => {
 })()
 
 const game = (() => {
+    let turn = 'bot'
+    const domBotBoard = document.getElementById('bot-board')
+    const botBoardArray = Array.from(domBotBoard.children)
+    const domPlayerBoard = document.getElementById('player-board')
+    const playerBoardArray = Array.from(domPlayerBoard.children)
+
     const over = () => {
         if (bot.board.hits.length === 17) return true
         else if (player.board.hits.length === 17) return true
         else return false
     }
 
-    return {over}
+    const changeTurn = () => {
+        
+        if (turn === 'bot') {
+            playerBoardArray.forEach(element => element.onclick = null)
+            const playableArray = botBoardArray.filter(element => element.space.mark === null)
+            playableArray.forEach(element => element.onclick = () => strike(player, element))
+        } else {
+            botBoardArray.forEach(element => element.onclick = null)
+            const playableArray = playerBoardArray.filter(element => element.space.mark === null)
+            playableArray.forEach(element => element.onclick = () => strike(bot, element))
+        }
+        turn = turn === 'bot' ? 'player' : 'bot'
+    }
+
+    const deactivateBoards = () => {
+        playerBoardArray.forEach(element => element.onclick = null)
+        botBoardArray.forEach(element => element.onclick = null)
+    }
+
+    return {over, changeTurn, deactivateBoards}
 })()
 
 function strike(combatant, element) {
+    if (element.space.mark !== null) return
     message = document.getElementById('game-message')
     const opponent = combatant === player ? bot : player
     const domBoard = combatant === player ? document.getElementById('bot-board') : document.getElementById('player-board')
@@ -394,6 +418,8 @@ function strike(combatant, element) {
         element.textContent = "O"   
         message.textContent = `${combatantName} missed!`
     }
+    if (game.over() === false) game.changeTurn()
+    else game.deactivateBoards()
 }
 
 // export {ship, space, board, combatant}
