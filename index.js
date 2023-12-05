@@ -271,7 +271,7 @@ const placePlayerShips = (() => {
             game.message.textContent = `Select a space to set the starting point of your ${playerShips[index].name}`
         } else if (index === 4) {
             game.message.textContent = 'all ships are placed!'
-            setTimeout(() => {game.message.textContent = `Now, make your first move by clicking a space on the bot's board`}, "2000")
+            setTimeout(() => {game.message.textContent = `Now, make your first move by clicking a space on the bot's board`}, "500")
             game.changeTurn()
         }
     }
@@ -330,7 +330,7 @@ const placeBotShips = (() => {
     const setShipStart = (element) => {
         const x = +(element.getAttribute('x'))
         const y = +(element.getAttribute('y'))
-        const distance = (playerShips[index].length-1)
+        const distance = (botShips[index].length-1)
         const left = botDomBoard.element((x-distance),y)
         const down = botDomBoard.element(x,(y+distance))
         const right = botDomBoard.element((x+distance),y)
@@ -361,25 +361,25 @@ const placeBotShips = (() => {
         if (startY>endY) {
             const x = startX
             for (let y = startY; y >= endY; y--) {
-                botDomBoard.element(x,y).space.ship = playerShips[index]
+                botDomBoard.element(x,y).space.ship = botShips[index]
                 // botDomBoard.element(x,y).style.backgroundColor = shipColor[index]
             }
         } else if (startY<endY) {
             const x = startX
             for (let y = startY; y <= endY; y++) {
-                botDomBoard.element(x,y).space.ship = playerShips[index]
+                botDomBoard.element(x,y).space.ship = botShips[index]
                 // botDomBoard.element(x,y).style.backgroundColor = shipColor[index]
             }
         } else if (startX>endX) {
             const y = startY
             for (let x = startX; x >= endX; x--) {
-                botDomBoard.element(x,y).space.ship = playerShips[index]
+                botDomBoard.element(x,y).space.ship = botShips[index]
                 // botDomBoard.element(x,y).style.backgroundColor = shipColor[index]
             }
         } else if (startX<endX) {
             const y = startY
             for (let x = startX; x <= endX; x++) {
-                botDomBoard.element(x,y).space.ship = playerShips[index]
+                botDomBoard.element(x,y).space.ship = botShips[index]
                 // botDomBoard.element(x,y).style.backgroundColor = shipColor[index]
             }
         }
