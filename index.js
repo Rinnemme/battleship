@@ -108,10 +108,51 @@ const botDomBoard = (() => {
     return {element}
 })()
 
+const game = (() => {
+    let turn = 'bot'
+    const message = document.getElementById('game-message')
+    const domBotBoard = document.getElementById('bot-board')
+    const botBoardArray = Array.from(domBotBoard.children)
+    const domPlayerBoard = document.getElementById('player-board')
+    const playerBoardArray = Array.from(domPlayerBoard.children)
+
+    const over = () => {
+        if (bot.board.hits.length === 17) return true
+        else if (player.board.hits.length === 17) return true
+        else return false
+    }
+
+    const changeTurn = () => {
+        
+        if (turn === 'bot') {
+            playerBoardArray.forEach(element => element.onclick = null)
+            const playableArray = botBoardArray.filter(element => element.space.mark === null)
+            playableArray.forEach(element => element.onclick = () => strike(player, element))
+        } else {
+            botBoardArray.forEach(element => element.onclick = null)
+            const playableArray = playerBoardArray.filter(element => element.space.mark === null)
+            playableArray.forEach(element => element.onclick = () => strike(bot, element))
+        }
+        turn = turn === 'bot' ? 'player' : 'bot'
+        if (turn === 'bot')  {
+            setTimeout(() => {message.textContent = 'The bot is thinking'}, "1000")
+            setTimeout(() => {message.textContent += '.'}, "1250")
+            setTimeout(() => {message.textContent += '.'}, "1500")
+            setTimeout(() => {message.textContent += '.'}, "1750")
+            setTimeout(() => {botLogic.takeTurn()}, "2250")
+        }
+    }
+
+    const deactivateBoards = () => {
+        playerBoardArray.forEach(element => element.onclick = null)
+        botBoardArray.forEach(element => element.onclick = null)
+    }
+
+    return {over, changeTurn, deactivateBoards, message}
+})()
 
 const placePlayerShips = (() => {
     const domBoard = document.getElementById('player-board')
-    const message = document.getElementById('game-message')
     const playerBoardArray = Array.from(domBoard.children)
     playerShips = [player.carrier, player.battleship, player.destroyer, player.submarine, player.patrolBoat]
     shipColor = ['#F52F57', '#F3752B', '#FFC863', '#59CD90', '#3FA7D6']
@@ -119,7 +160,7 @@ const placePlayerShips = (() => {
     let shipStart = null
     let potentialEnds = []
     playerBoardArray.forEach(element => element.onclick = () => {setShipStart(element)})
-    message.textContent = `Select a space to set the starting point of your ${playerShips[index].name}`
+    game.message.textContent = `Select a space to set the starting point of your ${playerShips[index].name}`
 
     const hasPotentialEnds = () => {
         if (potentialEnds.length > 0) return true
@@ -175,7 +216,7 @@ const placePlayerShips = (() => {
             }
         })
         if(!hasPotentialEnds()) {
-            message.textContent = `Your ${playerShips[index].name} would be obstructed here. Please select another space.`
+            game.message.textContent = `Your ${playerShips[index].name} would be obstructed here. Please select another space.`
             return
         }
         if(hasPotentialEnds()) {
@@ -183,7 +224,7 @@ const placePlayerShips = (() => {
             shipStart = element
             playerBoardArray.forEach(element => element.onclick = null)
             potentialEnds.forEach(element => element.onclick = () => {setShipEnd(element)})
-            message.textContent = `Select a space to set the end point of your ${playerShips[index].name}`
+            game.message.textContent = `Select a space to set the end point of your ${playerShips[index].name}`
         }
     }
     
@@ -227,9 +268,10 @@ const placePlayerShips = (() => {
             shipStart = null
             potentialEnds = []
             playerBoardArray.forEach(element => element.onclick = () => {setShipStart(element)})
-            message.textContent = `Select a space to set the starting point of your ${playerShips[index].name}`
+            game.message.textContent = `Select a space to set the starting point of your ${playerShips[index].name}`
         } else if (index === 4) {
-            message.textContent = 'all ships are placed!'
+            game.message.textContent = 'all ships are placed!'
+            setTimeout(() => {game.message.textContent = `Now, make your first move by clicking a space on the bot's board`}, "2000")
             game.changeTurn()
         }
     }
@@ -239,7 +281,7 @@ const placeBotShips = (() => {
     const domBoard = document.getElementById('bot-board')
     const botBoardArray = Array.from(domBoard.children)
     botShips = [bot.carrier, bot.battleship, bot.destroyer, bot.submarine, bot.patrolBoat]
-    shipColor = ['#F52F57', '#F3752B', '#FFC863', '#59CD90', '#3FA7D6']
+    // shipColor = ['#F52F57', '#F3752B', '#FFC863', '#59CD90', '#3FA7D6']
     let index = 0
     let shipStart = null
     let potentialEnds = []
@@ -280,10 +322,10 @@ const placeBotShips = (() => {
         return false
     }
 
-    const highlightPotentialEnds = (element) => {
-        element.style.backgroundColor = "gray"
-        potentialEnds.forEach(element => element.style.backgroundColor = "lightgray")
-    }
+    // const highlightPotentialEnds = (element) => {
+    //     element.style.backgroundColor = "gray"
+    //     potentialEnds.forEach(element => element.style.backgroundColor = "lightgray")
+    // }
 
     const setShipStart = (element) => {
         const x = +(element.getAttribute('x'))
@@ -303,7 +345,7 @@ const placeBotShips = (() => {
             return
         }
         if(hasPotentialEnds()) {
-            highlightPotentialEnds(element)
+            // highlightPotentialEnds(element)
             shipStart = element
             botBoardArray.forEach(element => element.onclick = null)
             potentialEnds.forEach(element => element.onclick = () => {setShipEnd(element)})
@@ -320,25 +362,25 @@ const placeBotShips = (() => {
             const x = startX
             for (let y = startY; y >= endY; y--) {
                 botDomBoard.element(x,y).space.ship = playerShips[index]
-                botDomBoard.element(x,y).style.backgroundColor = shipColor[index]
+                // botDomBoard.element(x,y).style.backgroundColor = shipColor[index]
             }
         } else if (startY<endY) {
             const x = startX
             for (let y = startY; y <= endY; y++) {
                 botDomBoard.element(x,y).space.ship = playerShips[index]
-                botDomBoard.element(x,y).style.backgroundColor = shipColor[index]
+                // botDomBoard.element(x,y).style.backgroundColor = shipColor[index]
             }
         } else if (startX>endX) {
             const y = startY
             for (let x = startX; x >= endX; x--) {
                 botDomBoard.element(x,y).space.ship = playerShips[index]
-                botDomBoard.element(x,y).style.backgroundColor = shipColor[index]
+                // botDomBoard.element(x,y).style.backgroundColor = shipColor[index]
             }
         } else if (startX<endX) {
             const y = startY
             for (let x = startX; x <= endX; x++) {
                 botDomBoard.element(x,y).space.ship = playerShips[index]
-                botDomBoard.element(x,y).style.backgroundColor = shipColor[index]
+                // botDomBoard.element(x,y).style.backgroundColor = shipColor[index]
             }
         }
     }
@@ -361,44 +403,22 @@ const placeBotShips = (() => {
     }
 })()
 
-const game = (() => {
-    let turn = 'bot'
-    const domBotBoard = document.getElementById('bot-board')
-    const botBoardArray = Array.from(domBotBoard.children)
+
+
+const botLogic = (() => {
     const domPlayerBoard = document.getElementById('player-board')
     const playerBoardArray = Array.from(domPlayerBoard.children)
 
-    const over = () => {
-        if (bot.board.hits.length === 17) return true
-        else if (player.board.hits.length === 17) return true
-        else return false
+    const takeTurn = () => {
+        const playableArray = playerBoardArray.filter(element => element.space.mark === null)
+        playableArray[Math.floor(Math.random()*playableArray.length)].click()
     }
 
-    const changeTurn = () => {
-        
-        if (turn === 'bot') {
-            playerBoardArray.forEach(element => element.onclick = null)
-            const playableArray = botBoardArray.filter(element => element.space.mark === null)
-            playableArray.forEach(element => element.onclick = () => strike(player, element))
-        } else {
-            botBoardArray.forEach(element => element.onclick = null)
-            const playableArray = playerBoardArray.filter(element => element.space.mark === null)
-            playableArray.forEach(element => element.onclick = () => strike(bot, element))
-        }
-        turn = turn === 'bot' ? 'player' : 'bot'
-    }
-
-    const deactivateBoards = () => {
-        playerBoardArray.forEach(element => element.onclick = null)
-        botBoardArray.forEach(element => element.onclick = null)
-    }
-
-    return {over, changeTurn, deactivateBoards}
+    return {takeTurn}
 })()
 
 function strike(combatant, element) {
     if (element.space.mark !== null) return
-    message = document.getElementById('game-message')
     const opponent = combatant === player ? bot : player
     const domBoard = combatant === player ? document.getElementById('bot-board') : document.getElementById('player-board')
     const combatantName = combatant === player ? 'You' : 'The bot'
@@ -409,14 +429,14 @@ function strike(combatant, element) {
         element.style.fontWeight = '800'
         element.textContent = 'X'
         if (element.space.ship.sunk() === true) {
-            if (game.over()) message.textContent = `${combatantName} sunk ${opponentPossessive} ${element.space.ship.name}, and won the game!`
-            else message.textContent = `${combatantName} sunk ${opponentPossessive} ${element.space.ship.name}`
+            if (game.over()) game.message.textContent = `${combatantName} sunk ${opponentPossessive} ${element.space.ship.name}, and won the game!`
+            else game.message.textContent = `${combatantName} sunk ${opponentPossessive} ${element.space.ship.name}`
         }
-        else message.textContent = `${combatantName} got a hit!`
+        else game.message.textContent = `${combatantName} got a hit!`
     }
     else if (element.space.mark === 'miss') {
         element.textContent = "O"   
-        message.textContent = `${combatantName} missed!`
+        game.message.textContent = `${combatantName} missed!`
     }
     if (game.over() === false) game.changeTurn()
     else game.deactivateBoards()
