@@ -77,3 +77,9 @@ h1 {
     border:1px solid lightgray;
     background-color:white;
 }
+
+#bot-board>.space {
+    background-color: rgb(90,90,90);
+    border:1px solid rgb(30,30,30);
+    color:white;
+}
