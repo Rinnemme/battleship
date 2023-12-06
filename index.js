@@ -433,33 +433,98 @@ const botLogic = (() => {
     const domPlayerBoard = document.getElementById('player-board')
     const playerBoardArray = Array.from(domPlayerBoard.children)
 
-    const left = (element) => {
-        const x = +element.getAttribute('x') 
-        const y = +element.getAttribute('x')
-        return playerDomBoard.element((x-1),y)
+    const clickElement = (space) => {
+        const x = space.x
+        const y = space.y
+        playerDomBoard.element(x,y).click()
     }
 
-    const right = (element) => {
-        const x = +element.getAttribute('x') 
-        const y = +element.getAttribute('x')
-        return playerDomBoard.element((x+1),y)
+    const left = (space) => {
+        const x = space.x
+        const y = space.y
+        return player.board.space((x-1),y)
     }
 
-    const up = (element) => {
-        const x = +element.getAttribute('x') 
-        const y = +element.getAttribute('x')
-        return playerDomBoard.element(x,(y-1))
+    const right = (space) => {
+        const x = space.x
+        const y = space.y
+        return player.board.space((x+1),y)
     }
 
-    const down = (element) => {
-        const x = +element.getAttribute('x') 
-        const y = +element.getAttribute('x')
-        return playerDomBoard.element(x,(y+1))
+    const up = (space) => {
+        const x = space.x
+        const y = space.y
+        return player.board.space(x,(y-1))
     }
 
+    const down = (space) => {
+        const x = space.x
+        const y = space.y
+        return player.board.space(x,(y+1))
+    }
+    
+    const noAdjacentIsHit = (space) => {
+        let result = true
+        adjacentSpaces = [left(space), up(space), right(space), down(space)]
+        validAdjacentSpaces = adjacentSpaces.filter(option => option !== undefined)
+        validAdjacentSpaces.forEach(option => {if(option.mark === 'hit') result = false})
+        return result
+    }
+    
+    const firstNullAdjacent = (space) => {
+        adjacentSpaces = [left(space), up(space), right(space), down(space)]
+        nullAdjacentSpaces = adjacentSpaces.filter(option => option !== undefined && option.mark === null)
+        return(nullAdjacentSpaces[0])
+    }
+
+    const furthestNonHit = (direction, space) => {
+        if (space === undefined || space.mark !== 'hit') return space
+        else if (direction === 'left') {
+            return furthestNonHit(direction, left(space))
+        } else if (direction === 'right') {
+            return furthestNonHit(direction, right(space))
+        } else if (direction === 'up') {
+            return furthestNonHit(direction, up(space))
+        } else if (direction === 'down') {
+            return furthestNonHit(direction, down(space))
+        }
+    }
+
+    const tryOppositeDirectionOfAdjacentHit = (space) => {
+        if (left(space) !== undefined && left(space).mark === 'hit') {
+            if (right(space) === undefined || right(space).mark !== null) {
+                if (furthestNonHit('left', space) === undefined || furthestNonHit('left', space).mark !== null) clickElement(firstNullAdjacent(space))
+                else clickElement(furthestNonHit('left', space))
+            } else clickElement(right(space))
+        } else if (right(space) !== undefined && right(space).mark === 'hit') {
+            if (left(space) === undefined || left(space).mark !== null) {
+                if (furthestNonHit('right', space) === undefined || furthestNonHit('right', space).mark !== null) clickElement(firstNullAdjacent(space))
+                else clickElement(furthestNonHit('right', space))
+            } else clickElement(left(space))
+        } else if (up(space) !== undefined && up(space).mark === 'hit') {
+            if (down(space) === undefined || down(space).mark !== null) {
+                if (furthestNonHit('up', space) === undefined || furthestNonHit('up', space).mark !== null) clickElement(firstNullAdjacent(space))
+                else clickElement(furthestNonHit('left', space))
+            } else clickElement(down(space))
+        } else if (down(space) !== undefined && down(space).mark === 'hit') {
+            if (up(space) === undefined || up(space).mark !== null) {
+                if (furthestNonHit('down', space) === undefined || furthestNonHit('down', space).mark !== null) clickElement(firstNullAdjacent(space))
+                else clickElement(furthestNonHit('down', space))
+            } else clickElement(up(space))
+        }
+    }
+    
     const takeTurn = () => {
         const playableArray = playerBoardArray.filter(element => element.space.mark === null)
-        playableArray[Math.floor(Math.random()*playableArray.length)].click()
+        const unsunkHits = player.board.hits.filter(space => space.ship.sunk() === false)
+        if (unsunkHits.length === 0) playableArray[Math.floor(Math.random()*playableArray.length)].click()
+        else {
+            const lastHit = unsunkHits[0]
+            if (noAdjacentIsHit(lastHit) === true) clickElement(firstNullAdjacent(lastHit))
+            else tryOppositeDirectionOfAdjacentHit(lastHit)
+        }
+       
+
     }
 
     return {takeTurn}
