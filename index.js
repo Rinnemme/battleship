@@ -58,7 +58,7 @@ class combatant {
         } else {
             target.ship.hit()
             target.mark = 'hit'
-            board.hits.push(target)
+            board.hits.unshift(target)
         }
     } 
 }
