@@ -142,7 +142,10 @@ const game = (() => {
             if (turn === 'player') element.style.backgroundColor = "#D32145"
             if (element.space.ship.sunk() === true) {
                 if (game.over()) game.message.textContent = `${combatantName} sunk ${opponentPossessive} ${element.space.ship.name}, and won the game!`
-                else game.message.textContent = `${combatantName} sunk ${opponentPossessive} ${element.space.ship.name}`
+                else {
+                    game.message.textContent = `${combatantName} sunk ${opponentPossessive} ${element.space.ship.name}`
+                    opponent.board.spaces.forEach(space => {if(space.ship === element.space.ship) space.mark = 'sunk'})
+                }
             }
             else game.message.textContent = `${combatantName} got a hit!`
         }
