@@ -210,8 +210,10 @@ const game = (() => {
             domPlayerBoardSpaces.forEach(element => element.onclick = null)
             const playableArray = domBotBoardSpaces.filter(element => element.space.mark === null)
             playableArray.forEach(element => element.onclick = () => strike(player, element))
+            playableArray.forEach(element => element.classList.add('clickable'))
         } else {
             domBotBoardSpaces.forEach(element => element.onclick = null)
+            domBotBoardSpaces.forEach(element => element.classList.remove('clickable'))
             const playableArray = domPlayerBoardSpaces.filter(element => element.space.mark === null)
             playableArray.forEach(element => element.onclick = () => strike(bot, element))
         }
@@ -240,6 +242,7 @@ const game = (() => {
 const placePlayerShips = (() => {
     const domBoard = document.getElementById('player-board')
     const domPlayerBoardSpaces = Array.from(domBoard.children)
+    domPlayerBoardSpaces.forEach(element => element.classList.add('clickable'))
     playerShips = [player.carrier, player.battleship, player.destroyer, player.submarine, player.patrolBoat]
     shipColor = ['#E23457', '#F3752B', '#FFC863', '#59CD90', '#3FA7D6']
     let index = 0
@@ -309,7 +312,9 @@ const placePlayerShips = (() => {
             highlightPotentialEnds(element)
             shipStart = element
             domPlayerBoardSpaces.forEach(element => element.onclick = null)
+            domPlayerBoardSpaces.forEach(element => element.classList.remove('clickable'))
             potentialEnds.forEach(element => element.onclick = () => {setShipEnd(element)})
+            potentialEnds.forEach(element => element.classList.add('clickable'))
             game.message.textContent = `Select a space to set the end point of your ${playerShips[index].name}`
         }
     }
@@ -354,10 +359,12 @@ const placePlayerShips = (() => {
             shipStart = null
             potentialEnds = []
             domPlayerBoardSpaces.forEach(element => element.onclick = () => {setShipStart(element)})
+            domPlayerBoardSpaces.forEach(element => element.classList.add('clickable'))
             game.message.textContent = `Select a space to set the starting point of your ${playerShips[index].name}`
         } else if (index === 4) {
             game.message.textContent = 'all ships are placed!'
             setTimeout(() => {game.message.textContent = `Now, make your first move by clicking a space on the bot's board`}, "1000")
+            domPlayerBoardSpaces.forEach(element => element.classList.remove('clickable'))
             game.changeTurn()
         }
     }
