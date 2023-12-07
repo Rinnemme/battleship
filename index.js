@@ -64,7 +64,6 @@ class combatant {
 }
 
 const player = new combatant('player')
-const bot = new combatant('the bot')
 
 const playerDomBoard = (() => {
     const playerBoard = document.getElementById('player-board')
@@ -87,6 +86,8 @@ const playerDomBoard = (() => {
     return {element}
 })()
 
+const bot = new combatant('the bot')
+
 const botDomBoard = (() => {
     const botBoard = document.getElementById('bot-board')
     for(let y = 1; y <= 10; y++) {
@@ -108,6 +109,7 @@ const botDomBoard = (() => {
     return {element}
 })()
 
+// A little 'cheat' function just for fun
 const colorBotBoard = () => {
     botboard = document.getElementById('bot-board')
     botBoard = Array.from(botboard.children)
@@ -115,62 +117,115 @@ const colorBotBoard = () => {
 }
 
 const game = (() => {
-    let turn = 'bot'
     const message = document.getElementById('game-message')
     const domBotBoard = document.getElementById('bot-board')
-    const botBoardArray = Array.from(domBotBoard.children)
+    const domBotBoardSpaces = Array.from(domBotBoard.children)
     const domPlayerBoard = document.getElementById('player-board')
-    const playerBoardArray = Array.from(domPlayerBoard.children)
+    const domPlayerBoardSpaces = Array.from(domPlayerBoard.children)
+    
+    let combatant = bot
+    let opponent
+    let combatantName
+    let opponentPossessive
+    let domOpponentBoardSpaces
 
-    const over = () => {
+    const darkened = (color) => {
+        if (color === 'rgb(226, 52, 87)') return '#CC2647'
+        if (color === 'rgb(243, 117, 43)') return '#D55E19'
+        if (color === 'rgb(255, 200, 99)') return '#E6B04B'
+        if (color === 'rgb(89, 205, 144)') return '#47B57A'
+        if (color === 'rgb(63, 167, 214)') return '#2B90BF'
+    }
+
+    const gameOver = () => {
         if (bot.board.hits.length === 17) return true
         else if (player.board.hits.length === 17) return true
         else return false
     }
 
+    const deactivateBoards = () => {
+        domPlayerBoardSpaces.forEach(element => element.onclick = null)
+        domBotBoardSpaces.forEach(element => element.onclick = null)
+    }
+
+    const gameOverMessage = (lastHitElement) => {
+        message.style.backgroundColor = combatant === player ? '#167AA9' : '#E23457'
+        message.textContent = `${combatantName} sunk ${opponentPossessive} ${lastHitElement.space.ship.name}, and won the game!`
+        deactivateBoards()
+    }
+
+    const sunkenShipMessage = (element) => {
+        message.style.backgroundColor = combatant === player ? '#167AA9' : '#E23457'
+        message.textContent = `${combatantName} sunk ${opponentPossessive} ${element.space.ship.name}`
+    }
+
+    const colorSunkenShip = (element) => {
+        if (combatant === bot) {
+            domOpponentBoardSpaces.forEach(space => {if (space.space.ship === element.space.ship) {
+                space.style.backgroundColor = 'rgb(150,150,150)'
+            }})
+        } else (
+            domOpponentBoardSpaces.forEach(space => {if (space.space.ship === element.space.ship) {
+                space.style.backgroundColor = 'rgb(0,0,0)'
+            }})
+        )
+    }
+
+    const processHit = (combatant, element) => {
+        element.style.fontWeight = '800'
+        element.textContent = 'X'
+        element.style.backgroundColor = combatant === player ? "#E23457" : `${darkened(element.style.backgroundColor)}`
+        if (element.space.ship.sunk() === true) {
+            if (gameOver()) {
+                gameOverMessage(element)
+            } else {
+                sunkenShipMessage(element)
+                opponent.board.spaces.forEach(space => {if(space.ship === element.space.ship) space.mark = 'sunk'})
+                colorSunkenShip(element)
+            }
+        } else message.textContent = `${combatantName} got a hit!`
+    }
+
+    const processMiss = (element) => {
+        element.textContent = "O"   
+        element.style.backgroundColor = combatant === player ? "rgb(70,70,70)" : "rgb(220,220,220)"
+        message.textContent = `${combatantName} missed!`
+    }
+
     const strike = (combatant, element) => {
         if (element.space.mark !== null) return
-        const opponent = combatant === player ? bot : player
-        const domBoard = combatant === player ? document.getElementById('bot-board') : document.getElementById('player-board')
-        const combatantName = combatant === player ? 'You' : 'The bot'
-        const opponentPossessive = combatant === player ? `the bot's` : 'your'
-        Array.from(domBoard.children).forEach(element => element.style.fontWeight = '200')
         combatant.attack(opponent.board, +element.getAttribute('x'), +element.getAttribute('y'))
-        if (element.space.mark === 'hit') {
-            element.style.fontWeight = '800'
-            element.textContent = 'X'
-            if (turn === 'player') element.style.backgroundColor = "#D32145"
-            if (element.space.ship.sunk() === true) {
-                if (game.over()) game.message.textContent = `${combatantName} sunk ${opponentPossessive} ${element.space.ship.name}, and won the game!`
-                else {
-                    game.message.textContent = `${combatantName} sunk ${opponentPossessive} ${element.space.ship.name}`
-                    opponent.board.spaces.forEach(space => {if(space.ship === element.space.ship) space.mark = 'sunk'})
-                }
-            }
-            else game.message.textContent = `${combatantName} got a hit!`
+        message.style.backgroundColor = 'rgb(40,40,40)'
+        domOpponentBoardSpaces.forEach(element => element.style.fontWeight = '200')
+        if (combatant === bot) {domPlayerBoardSpaces.filter(element => element.space.mark === 'miss').forEach(element => {
+            element.style.backgroundColor = 'white'
+        })}
+        if (element.space.mark === 'hit') processHit(combatant, element)
+        else if (element.space.mark === 'miss') processMiss(element)
+        if (gameOver() === false) game.changeTurn()
+    }
+
+    const switchActiveBoard = () => {
+        if (combatant === bot) {
+            domPlayerBoardSpaces.forEach(element => element.onclick = null)
+            const playableArray = domBotBoardSpaces.filter(element => element.space.mark === null)
+            playableArray.forEach(element => element.onclick = () => strike(player, element))
+        } else {
+            domBotBoardSpaces.forEach(element => element.onclick = null)
+            const playableArray = domPlayerBoardSpaces.filter(element => element.space.mark === null)
+            playableArray.forEach(element => element.onclick = () => strike(bot, element))
         }
-        else if (element.space.mark === 'miss') {
-            element.textContent = "O"   
-            if (turn === 'player') element.style.backgroundColor = "rgb(50,50,50)"
-            game.message.textContent = `${combatantName} missed!`
-        }
-        if (game.over() === false) game.changeTurn()
-        else game.deactivateBoards()
     }
 
     const changeTurn = () => {
-        
-        if (turn === 'bot') {
-            playerBoardArray.forEach(element => element.onclick = null)
-            const playableArray = botBoardArray.filter(element => element.space.mark === null)
-            playableArray.forEach(element => element.onclick = () => strike(player, element))
-        } else {
-            botBoardArray.forEach(element => element.onclick = null)
-            const playableArray = playerBoardArray.filter(element => element.space.mark === null)
-            playableArray.forEach(element => element.onclick = () => strike(bot, element))
-        }
-        turn = turn === 'bot' ? 'player' : 'bot'
-        if (turn === 'bot')  {
+        switchActiveBoard()
+        combatant = combatant === bot ? player : bot
+        combatantName = combatant === player ? 'You' : 'The bot'
+        opponentPossessive = combatant === player ? `the bot's` : 'your'
+        opponent = combatant === player ? bot : player
+        domOpponentBoardSpaces = combatant === player ? domBotBoardSpaces : domPlayerBoardSpaces
+        if (combatant === bot)  {
+            setTimeout(() => {message.style.backgroundColor = 'rgb(40,40,40)'}, "1000")
             setTimeout(() => {message.textContent = 'The bot is thinking'}, "1000")
             setTimeout(() => {message.textContent += '.'}, "1250")
             setTimeout(() => {message.textContent += '.'}, "1500")
@@ -179,23 +234,18 @@ const game = (() => {
         }
     }
 
-    const deactivateBoards = () => {
-        playerBoardArray.forEach(element => element.onclick = null)
-        botBoardArray.forEach(element => element.onclick = null)
-    }
-
-    return {over, changeTurn, deactivateBoards, message}
+    return {changeTurn, message}
 })()
 
 const placePlayerShips = (() => {
     const domBoard = document.getElementById('player-board')
-    const playerBoardArray = Array.from(domBoard.children)
+    const domPlayerBoardSpaces = Array.from(domBoard.children)
     playerShips = [player.carrier, player.battleship, player.destroyer, player.submarine, player.patrolBoat]
-    shipColor = ['#F52F57', '#F3752B', '#FFC863', '#59CD90', '#3FA7D6']
+    shipColor = ['#E23457', '#F3752B', '#FFC863', '#59CD90', '#3FA7D6']
     let index = 0
     let shipStart = null
     let potentialEnds = []
-    playerBoardArray.forEach(element => element.onclick = () => {setShipStart(element)})
+    domPlayerBoardSpaces.forEach(element => element.onclick = () => {setShipStart(element)})
     game.message.textContent = `Select a space to set the starting point of your ${playerShips[index].name}`
 
     const hasPotentialEnds = () => {
@@ -258,7 +308,7 @@ const placePlayerShips = (() => {
         if(hasPotentialEnds()) {
             highlightPotentialEnds(element)
             shipStart = element
-            playerBoardArray.forEach(element => element.onclick = null)
+            domPlayerBoardSpaces.forEach(element => element.onclick = null)
             potentialEnds.forEach(element => element.onclick = () => {setShipEnd(element)})
             game.message.textContent = `Select a space to set the end point of your ${playerShips[index].name}`
         }
@@ -303,7 +353,7 @@ const placePlayerShips = (() => {
             index++
             shipStart = null
             potentialEnds = []
-            playerBoardArray.forEach(element => element.onclick = () => {setShipStart(element)})
+            domPlayerBoardSpaces.forEach(element => element.onclick = () => {setShipStart(element)})
             game.message.textContent = `Select a space to set the starting point of your ${playerShips[index].name}`
         } else if (index === 4) {
             game.message.textContent = 'all ships are placed!'
@@ -315,13 +365,13 @@ const placePlayerShips = (() => {
 
 const placeBotShips = (() => {
     const domBoard = document.getElementById('bot-board')
-    const botBoardArray = Array.from(domBoard.children)
+    const domBotBoardSpaces = Array.from(domBoard.children)
     botShips = [bot.carrier, bot.battleship, bot.destroyer, bot.submarine, bot.patrolBoat]
     let index = 0
     let shipStart = null
     let potentialEnds = []
     let botShipsPlaced = false
-    botBoardArray.forEach(element => element.onclick = () => {setShipStart(element)})
+    domBotBoardSpaces.forEach(element => element.onclick = () => {setShipStart(element)})
 
     const hasPotentialEnds = () => {
         if (potentialEnds.length > 0) return true
@@ -376,7 +426,7 @@ const placeBotShips = (() => {
         }
         if(hasPotentialEnds()) {
             shipStart = element
-            botBoardArray.forEach(element => element.onclick = null)
+            domBotBoardSpaces.forEach(element => element.onclick = null)
             potentialEnds.forEach(element => element.onclick = () => {setShipEnd(element)})
         }
     }
@@ -415,23 +465,21 @@ const placeBotShips = (() => {
             index++
             shipStart = null
             potentialEnds = []
-            botBoardArray.forEach(element => element.onclick = () => {setShipStart(element)})
+            domBotBoardSpaces.forEach(element => element.onclick = () => {setShipStart(element)})
         } else if (index === 4) {
             botShipsPlaced = true
         }
     }
 
     while (botShipsPlaced === false) {
-        let clickableArray = botBoardArray.filter(element => element.onclick !== null)
+        let clickableArray = domBotBoardSpaces.filter(element => element.onclick !== null)
         clickableArray[Math.floor(Math.random()*clickableArray.length)].click()
     }
 })()
 
-
-
 const botLogic = (() => {
     const domPlayerBoard = document.getElementById('player-board')
-    const playerBoardArray = Array.from(domPlayerBoard.children)
+    const domPlayerBoardSpaces = Array.from(domPlayerBoard.children)
 
     const clickElement = (space) => {
         const x = space.x
@@ -490,7 +538,7 @@ const botLogic = (() => {
         }
     }
 
-    const tryOppositeDirectionOfAdjacentHit = (space) => {
+    const considerNextMove = (space) => {
         if (left(space) !== undefined && left(space).mark === 'hit') {
             if (right(space) === undefined || right(space).mark !== null) {
                 if (furthestNonHit('left', space) === undefined || furthestNonHit('left', space).mark !== null) clickElement(firstNullAdjacent(space))
@@ -515,16 +563,14 @@ const botLogic = (() => {
     }
     
     const takeTurn = () => {
-        const playableArray = playerBoardArray.filter(element => element.space.mark === null)
+        const playableArray = domPlayerBoardSpaces.filter(element => element.space.mark === null)
         const unsunkHits = player.board.hits.filter(space => space.ship.sunk() === false)
         if (unsunkHits.length === 0) playableArray[Math.floor(Math.random()*playableArray.length)].click()
         else {
             const lastHit = unsunkHits[0]
             if (noAdjacentIsHit(lastHit) === true) clickElement(firstNullAdjacent(lastHit))
-            else tryOppositeDirectionOfAdjacentHit(lastHit)
+            else considerNextMove(lastHit)
         }
-       
-
     }
 
     return {takeTurn}
