@@ -1,3 +1,5 @@
+// This file (and TDD) was used while developing the underlying mechanisms beneath the DOM / DOM manipulation.
+
 import {ship, space, board, combatant} from './index.js'
 
 test('ship returns an object with length equal to passed parameter', () => {
